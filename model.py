@@ -23,6 +23,9 @@ class User(db.Model):
     age = db.Column(db.Integer, nullable=True)
     zipcode = db.Column(db.String(15), nullable=True)
 
+    def __repr__(self):
+        return "<User user_id=%s email=%s>" % (self.user_id, self.email)
+
 
 # Put your Movie and Rating model classes here.
 class Movie(db.Model):
@@ -35,6 +38,9 @@ class Movie(db.Model):
     released_at = db.Column(db.DateTime, nullable=False)
     imdb_url = db.Column(db.String(200), nullable=False)
 
+    def __repr__(self):
+        return "<Movie movie_id=%s title=%s>" % (self.movie_id, self.title)
+
 class Rating(db.Model):
     """Create user ratings table"""
 
@@ -44,6 +50,9 @@ class Rating(db.Model):
     movie_id = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, nullable=False)
     score = db.Column(db.Integer, nullable=False)
+
+    def __repr__(self):
+        return "<Rating rating_id=%s score=%s>" % (self.rating_id, self.score)
 
 
 ##############################################################################
