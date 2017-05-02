@@ -39,7 +39,7 @@ class Movie(db.Model):
     imdb_url = db.Column(db.String(200), nullable=True)
 
     def __repr__(self):
-        return "<Movie movie_id=%s title=%s>" % (self.movie_id, self.title)
+        return "<Movie movie_id=%s title=%s>" % (self.movie_id, self.movie_title)
 
 class Rating(db.Model):
     """Create user ratings table"""
@@ -47,9 +47,14 @@ class Rating(db.Model):
     __tablename__ = "ratings"
 
     rating_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    movie_id = db.Column(db.Integer, nullable=False)
-    user_id = db.Column(db.Integer, nullable=False)
+    movie_id = db.Column(db.Integer, db.ForeignKey('movies.movie_id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     score = db.Column(db.Integer, nullable=False)
+
+    user = db.relationship("User", backref=db.backref("ratings", 
+                                                    order_by=rating_id))
+    movie = db.relationship("Movie", backref=db.backref("ratings",
+                                                        order_by=rating_id))
 
     def __repr__(self):
         return "<Rating rating_id=%s score=%s>" % (self.rating_id, self.score)
