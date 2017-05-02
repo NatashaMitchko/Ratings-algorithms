@@ -35,8 +35,8 @@ class Movie(db.Model):
 
     movie_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     movie_title = db.Column(db.String(100), nullable=False)
-    released_at = db.Column(db.DateTime, nullable=False)
-    imdb_url = db.Column(db.String(200), nullable=False)
+    released_at = db.Column(db.DateTime, nullable=True)
+    imdb_url = db.Column(db.String(200), nullable=True)
 
     def __repr__(self):
         return "<Movie movie_id=%s title=%s>" % (self.movie_id, self.title)
