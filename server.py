@@ -25,12 +25,62 @@ def index():
     a = jsonify([1,3])
     return render_template("homepage.html")
 
+
 @app.route("/users")
 def user_list():
     """Show list of users."""
 
     users = User.query.all()
     return render_template("user_list.html", users=users)
+
+
+@app.route("/login", methods=["GET"])
+def show_login_form():
+    """ Render login form. """
+    return render_template("/login.html")
+
+
+@app.route("/login", methods=["POST"])
+def login():
+    """ Starts new Flask session for existing users. """
+
+    email = request.form.get("email")
+    user = User.query.filter_by(email=email).all()
+
+    if user == []:
+        flash("User not found.")
+        return render_template('/register_form.html')
+    else:
+        print user
+
+
+@app.route("/login.json", methods=["POST"])
+def is_user():
+    """ Checks if user exists and opens Flask session. Or something. Not clear yet."""
+    email = request.form.get("email")
+
+    user = User.query.filter_by(email=email).all()
+    if user == []:
+        flash("User not found.")
+        return render_template('/register_form')
+    else:
+        print "hi"
+
+
+@app.route("/register", methods=["GET"])
+def register_form():
+    """ Renders new user registration form. """
+
+    return render_template("register_form.html")
+
+
+@app.route("/register", methods=["POST"])
+def register_process():
+    """ Processes registration and sends user to homepage. """
+    # Check if users exists (validation)
+    # If so log them in (create a session??)
+    # If not flash "this account does not exist" and redirect to /register
+    return redirect("/")
 
 
 

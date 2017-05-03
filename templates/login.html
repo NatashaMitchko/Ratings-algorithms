@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+
+<form id="login_form" action="/login" method="POST">
+<label>Email <input type="text" name="email" id="email_login"></label><br>
+<label>Password <input type="text" name="password" id="password_login"></label><br>
+
+<input type="submit" name="login" value="login" id="submit_login">
+</form>
+
+<a href="/register">Not registered? Click here</a>
+
+
+<!-- JavaScript starts here -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<script type="text/javascript">
+// var email = $('#email_submit').val();
+// var password = $('#password_submit').val();
+
+// function startSession() {
+
+// }
+
+// function sendRequest(evt) {
+//     evt.preventDefault();
+//     $.post("/login.json", email, startSession);
+// }
+
+
+
+// $('#login_form').on('submit', sendRequest)
+
+</script>
+
+
+{% endblock %}
