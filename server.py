@@ -48,23 +48,41 @@ def login():
     user = User.query.filter_by(email=email).all()
 
     if user == []:
-        flash("User not found.")
-        return render_template('/register_form.html')
+        flash("User not found. Please register.")
+        return redirect('/register')
     else:
+        user = user[0]
         print user
+        password = request.form.get("password")
+        if password == user.password:
+            # start a login session
+            session['user_id'] = str(user.user_id)
+            flash("Successfully logged in.")
+            print "User", user.user_id, "successfully logged in."
+            return redirect('/')
+        else: 
+            flash("Wrong password. Please try again.")
+            return redirect("/login")
 
+@app.route("/logout")
+# @login_required
+def logout():
+    print session['user_id'] + "logging out."
+    session.clear()
+    flash("Successfully logged out.")
+    return redirect('/')
 
-@app.route("/login.json", methods=["POST"])
-def is_user():
-    """ Checks if user exists and opens Flask session. Or something. Not clear yet."""
-    email = request.form.get("email")
+# @app.route("/login.json", methods=["POST"])
+# def is_user():
+#     """ Checks if user exists and opens Flask session. Or something. Not clear yet."""
+#     email = request.form.get("email")
 
-    user = User.query.filter_by(email=email).all()
-    if user == []:
-        flash("User not found.")
-        return render_template('/register_form')
-    else:
-        print "hi"
+    # user = User.query.filter_by(email=email).all()
+    # if user == []:
+    #     flash("User not found.")
+    #     return render_template('/register_form')
+    # else:
+    #     print "hi"
 
 
 @app.route("/register", methods=["GET"])
@@ -77,6 +95,26 @@ def register_form():
 @app.route("/register", methods=["POST"])
 def register_process():
     """ Processes registration and sends user to homepage. """
+    email = request.form.get("email")
+    password = request.form.get("password")
+    age = request.form.get("age")
+    zipcode = request.form.get("zipcode")
+
+    user = User.query.filter_by(email=email).all()
+    if user == []:
+        # create user
+        new_user = User(email=email, password=password, age=age, zipcode=zipcode)
+        db.session.add(new_user)
+        db.session.commit()
+        print "Added user successfully"
+        user = User.query.filter_by(email=email).one()
+        session['user_id'] = str(user.user_id)
+        flash("Successfully logged in.")
+        print "Created user with ID: {}, logged them in".format(user.user_id)
+        return redirect('/')
+    else:
+        flash("User already exists. Please log in.")
+        redirect('/login')
     # Check if users exists (validation)
     # If so log them in (create a session??)
     # If not flash "this account does not exist" and redirect to /register

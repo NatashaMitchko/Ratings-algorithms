@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
 
+{% for message in get_flashed_messages() %}
+    <span> {{ message }}</span>
+{% endfor %}
 
 
 <form id="login_form" action="/login" method="POST">

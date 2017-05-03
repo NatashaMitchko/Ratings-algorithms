@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
+<a href='/logout'>Log Out</a>
+{% for message in get_flashed_messages() %}
+    <span> {{ message }}</span>
+{% endfor %}
 
   <h1>Ratings</h1>
 

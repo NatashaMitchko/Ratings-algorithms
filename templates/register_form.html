@@ -1,18 +1,26 @@
 {% extends 'base.html' %}
 {% block content %}
 
+<!-- <span id="user_not_found"></span> -->
 
+{% for message in get_flashed_messages() %}
+    <span> {{ message }}</span>
+{% endfor %}
 
 <form name="login" action="/register" method="POST">
-<label>Email <input type="text" name="email" value="email"></label><br>
-<label>Password <input type="text" name="password" value="password"></label><br>
-<label>Age <input type="text" name="age" value="age"></label><br>
-<label>Zip Code <input type="text" name="zipcode" value="zipcode"></label><br>
+<label>Email <input type="text" name="email" value="email" required></label><br>
+<label>Password <input type="text" name="password" value="password"required ></label><br>
+<label>Age <input type="text" name="age" value="age" required></label><br>
+<label>Zip Code <input type="text" name="zipcode" value="zipcode" required></label><br>
 
 <input type="submit" name="register" value="register">
 </form>
 
-<script type="text/javascript"></script>
+<script type="text/javascript">
+
+
+
+</script>
 
 
 {% endblock %}
