@@ -25,6 +25,18 @@ def index():
     a = jsonify([1,3])
     return render_template("homepage.html")
 
+@app.route('/movies')
+def display_movie_list():
+    movies = Movie.query.order_by(Movie.movie_title).all()
+    return render_template("movie_list.html", movies=movies)
+
+
+@app.route('/movies/<movie_id>')
+def display_movie_details(movie_id):
+    movie = Movie.query.get(movie_id)
+
+    return render_template("movie_details.html", movie=movie)
+
 
 @app.route("/users")
 def user_list():
@@ -32,6 +44,20 @@ def user_list():
 
     users = User.query.all()
     return render_template("user_list.html", users=users)
+
+@app.route("/users/<user_id>")
+def show_user_profile(user_id):
+    # get user id
+    # render template
+    user = User.query.get(user_id)
+    user_ratings = user.ratings
+    movie_titles = {}
+    for rating in user_ratings:
+        movie_titles[rating.movie_id] = rating.movie.movie_title
+
+    print user_ratings
+    return render_template("user_profile.html", user=user, user_ratings=user_ratings,
+                                                movie_titles=movie_titles)
 
 
 @app.route("/login", methods=["GET"])
@@ -59,8 +85,8 @@ def login():
             session['user_id'] = str(user.user_id)
             flash("Successfully logged in.")
             print "User", user.user_id, "successfully logged in."
-            return redirect('/')
-        else: 
+            return redirect('/users/{}'.format(user.user_id))
+        else:
             flash("Wrong password. Please try again.")
             return redirect("/login")
 
@@ -71,18 +97,6 @@ def logout():
     session.clear()
     flash("Successfully logged out.")
     return redirect('/')
-
-# @app.route("/login.json", methods=["POST"])
-# def is_user():
-#     """ Checks if user exists and opens Flask session. Or something. Not clear yet."""
-#     email = request.form.get("email")
-
-    # user = User.query.filter_by(email=email).all()
-    # if user == []:
-    #     flash("User not found.")
-    #     return render_template('/register_form')
-    # else:
-    #     print "hi"
 
 
 @app.route("/register", methods=["GET"])
@@ -119,6 +133,7 @@ def register_process():
     # If so log them in (create a session??)
     # If not flash "this account does not exist" and redirect to /register
     return redirect("/")
+
 
 
 

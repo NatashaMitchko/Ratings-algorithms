@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+{% for message in get_flashed_messages() %}
+    <span> {{ message }} </span>
+{% endfor %}
+<div>
+    <h3>User Information</h3>
+        <p> Email: {{ user.email }} </p>
+        <p> Age: {{ user.age }} </p>
+        <p> Zipcode: {{ user.zipcode }} </p>
+</div>
+<div>
+    <h3>User Ratings</h3>
+    {% if user_ratings == [] %}
+        User has no ratings.
+    {% else %}
+        {% for rating in user_ratings %}
+            <p>Movie ID: {{ rating.movie_id }}</p>
+            <p>Movie title: {{ movie_titles[rating.movie_id] }}</p>
+            <p>User rating: {{ rating.score }}</p>
+
+        {% endfor %}
+    {% endif %}
+</div>
+
+<a href="/">GO HOME</a>
+
+
+{% endblock %}

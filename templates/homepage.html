@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
-<a href='/logout'>Log Out</a>
+{% if 'user_id' in session %}
+  <a href='/logout'>Log Out</a>
+  <a href='/users/{{ session['user_id'] }}'>Go to My Profile</a>
+{% endif %}
 {% for message in get_flashed_messages() %}
     <span> {{ message }}</span>
 {% endfor %}
@@ -13,7 +16,9 @@
   <h2>Users</h2>
   <p><a href="/users">View all users</a></p>
 
+{% if 'user_id' not in session %}
   <a href="/login"><h3>Click here to log in.</h3></a>
   <h3>Don't have an account yet? <a href="/register">Click here to register.</a></h3>
+{% endif %}
 
 {% endblock %}
