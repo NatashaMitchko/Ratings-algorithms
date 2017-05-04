@@ -34,8 +34,36 @@ def display_movie_list():
 @app.route('/movies/<movie_id>')
 def display_movie_details(movie_id):
     movie = Movie.query.get(movie_id)
+    ratings = movie.ratings
 
-    return render_template("movie_details.html", movie=movie)
+    scores = []
+    for rating in ratings:
+        scores.append(rating.score)
+
+    number_of_ratings = len(scores)
+    average_score = sum(scores) / (len(scores))
+
+    # session.query(func.avg(Rating.field2).label('average')).filter(Rating.url==url_string.netloc)
+
+    return render_template("movie_details.html", movie=movie, average_score=average_score,
+                            number_of_ratings=number_of_ratings)
+
+@app.route('/update_rating.json', methods=["POST"])
+def add_update_rating():
+    rating = request.form.get("user_rating")
+    user_id = session['user_id']
+    movie_id = request.args.get("movie_id")
+    current_user_rating = Rating.query.filter_by(user_id =user_id).all()
+
+    if current_user_rating == []:
+        new_rating = Rating(movie_id=movie_id, user_id=user_id, score=rating)
+        print new_rating
+        db.session.add(new_rating)
+        db.session.commit()
+
+
+    return jsonify(rating_dict)
+
 
 
 @app.route("/users")
