@@ -22,17 +22,22 @@ app.jinja_env.undefined = StrictUndefined
 @app.route('/')
 def index():
     """Homepage."""
-    a = jsonify([1,3])
+
     return render_template("homepage.html")
+
 
 @app.route('/movies')
 def display_movie_list():
+    """Show a list of all the movies in the database"""
+
     movies = Movie.query.order_by(Movie.movie_title).all()
     return render_template("movie_list.html", movies=movies)
 
 
 @app.route('/movies/<movie_id>')
 def display_movie_details(movie_id):
+    """Displaying details for a specific movie by movie id"""
+
     movie = Movie.query.get(movie_id)
     ratings = movie.ratings
 
@@ -43,26 +48,33 @@ def display_movie_details(movie_id):
     number_of_ratings = len(scores)
     average_score = sum(scores) / (len(scores))
 
-    # session.query(func.avg(Rating.field2).label('average')).filter(Rating.url==url_string.netloc)
-
     return render_template("movie_details.html", movie=movie, average_score=average_score,
                             number_of_ratings=number_of_ratings)
 
+
 @app.route('/update_rating.json', methods=["POST"])
 def add_update_rating():
-    rating = request.form.get("user_rating")
-    user_id = session['user_id']
-    movie_id = request.args.get("movie_id")
-    current_user_rating = Rating.query.filter_by(user_id =user_id).all()
+    """Adding or updating a rating from movie details page"""
 
-    if current_user_rating == []:
+    rating = int(request.form['user_rating'])
+    print rating
+    user_id = session['user_id']
+    print user_id
+    movie_id = request.form['movie_id']
+    print movie_id
+    current_rating = Rating.query.filter((Rating.user_id==user_id) & (Rating.movie_id==movie_id)).first()
+
+    if current_rating:
+        current_rating.score = rating
+        db.session.commit()
+    else:
         new_rating = Rating(movie_id=movie_id, user_id=user_id, score=rating)
         print new_rating
         db.session.add(new_rating)
         db.session.commit()
 
 
-    return jsonify(rating_dict)
+    return jsonify({})
 
 
 
@@ -73,10 +85,11 @@ def user_list():
     users = User.query.all()
     return render_template("user_list.html", users=users)
 
+
 @app.route("/users/<user_id>")
 def show_user_profile(user_id):
-    # get user id
-    # render template
+    """Shows users profile by user ID"""
+
     user = User.query.get(user_id)
     user_ratings = user.ratings
     movie_titles = {}
@@ -91,6 +104,7 @@ def show_user_profile(user_id):
 @app.route("/login", methods=["GET"])
 def show_login_form():
     """ Render login form. """
+
     return render_template("/login.html")
 
 
@@ -118,9 +132,11 @@ def login():
             flash("Wrong password. Please try again.")
             return redirect("/login")
 
+
 @app.route("/logout")
-# @login_required
 def logout():
+    """Clears user session"""
+
     print session['user_id'] + "logging out."
     session.clear()
     flash("Successfully logged out.")
@@ -137,6 +153,7 @@ def register_form():
 @app.route("/register", methods=["POST"])
 def register_process():
     """ Processes registration and sends user to homepage. """
+
     email = request.form.get("email")
     password = request.form.get("password")
     age = request.form.get("age")
@@ -144,7 +161,6 @@ def register_process():
 
     user = User.query.filter_by(email=email).all()
     if user == []:
-        # create user
         new_user = User(email=email, password=password, age=age, zipcode=zipcode)
         db.session.add(new_user)
         db.session.commit()
@@ -157,9 +173,7 @@ def register_process():
     else:
         flash("User already exists. Please log in.")
         redirect('/login')
-    # Check if users exists (validation)
-    # If so log them in (create a session??)
-    # If not flash "this account does not exist" and redirect to /register
+
     return redirect("/")
 
 

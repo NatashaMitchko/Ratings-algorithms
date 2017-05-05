@@ -9,7 +9,7 @@
 <div> {{ number_of_ratings}} user(s) have rated this movie an average of {{ average_score}}/5.</div>
 <div><a href="{{ movie.imdb_url }}">IMDB</a></div>
 
-<form action="/NO.json" id="update_rating">
+<form action="/" id="update_rating">
 <label>Add or update your rating: <input type="number" id="user_rating" name="rating" min="1" max="5" required></label>
 <button id="submit">Submit</button>
 </form>
@@ -18,14 +18,18 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script type="text/javascript">
-    console.log("hello hello")
+
+    function ratedMessage(response) {
+        alert("You rated it!");
+    }
+
     function updateRating(evt){
         evt.preventDefault();
-        var user_rating = $('#user_rating').val();
-        $.post('/update_rating.json', user_rating, function(){
-                                                    alert("You rated it!");
-                                                    $('#submit').prop('disabled',true);
-                                                    });
+        var necessaryData = {
+        "user_rating": $('#user_rating').val(),
+        "movie_id": {{ movie.movie_id }}
+        };
+        $.post('/update_rating.json', necessaryData, ratedMessage);
     }
 
     $('#submit').on('click', updateRating);
